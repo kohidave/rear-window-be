@@ -21,16 +21,28 @@ func HealthCheck(w http.ResponseWriter, req *http.Request, ps httprouter.Params)
 }
 
 func GetImage(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+	var imgURL string
+	var randomImage *[]byte
+	var err error
 	// Get the bytes for a random image
+
 	imgSrvc := NewImageService()
-	options := []string{"person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat", "traffic light", "fire hydrant", "stop_sign", "parking meter", "bench", "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donot", "cake", "chair", "couch", "potted plant", "bed", "dining table", "toilet", "tv", "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy bear", "hair dryer", "toothbrush"}
-	searchTerm := fmt.Sprintf("%s %s",
-		options[rand.Intn(len(options))],
-		options[rand.Intn(len(options))])
-	imgURL, randomImage, err := imgSrvc.RandomImage(searchTerm)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
+
+	// Try this a few times because it can be empty responses
+	for i := 0; i < 5; i++ {
+		options := []string{"person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat", "traffic light", "fire hydrant", "stop_sign", "parking meter", "bench", "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donot", "cake", "chair", "couch", "potted plant", "bed", "dining table", "toilet", "tv", "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy bear", "hair dryer", "toothbrush"}
+		searchTerm := fmt.Sprintf("%s %s",
+			options[rand.Intn(len(options))],
+			options[rand.Intn(len(options))])
+		imgURL, randomImage, err = imgSrvc.RandomImage(searchTerm)
+		if err == nil {
+			break
+		} else {
+			if i == 4 {
+				http.Error(w, err.Error(), 500)
+				return
+			}
+		}
 	}
 
 	detectSrvc := NewDetectService()

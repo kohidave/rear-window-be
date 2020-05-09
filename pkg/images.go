@@ -55,6 +55,7 @@ func (s *ImageService) RandomImage(subject string) (string, *[]byte, error) {
 	}
 
 	if len(results.Photos) == 0 {
+		fmt.Println(string(respBody))
 		return "", nil, fmt.Errorf("No results when searching for photos")
 	}
 
