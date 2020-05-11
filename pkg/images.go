@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"os"
 )
 
 type ImageService struct {
@@ -16,7 +17,7 @@ type ImageService struct {
 
 func NewImageService() *ImageService {
 	return &ImageService{
-		secret: "563492ad6f91700001000001a62e4b6bf7774ad3bac2149b6ff31fe9",
+		secret: os.Getenv("PEXELS_API_SECRET"),
 		client: &http.Client{},
 	}
 }
